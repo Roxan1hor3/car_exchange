@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
-CITY = ((1, 'Rivne'),)
+CITY = (('Rivne', 'Rivne'), ('Kiyv', 'Kiyv'))
 
 
 class Car(models.Model):
@@ -15,6 +15,8 @@ class Car(models.Model):
     accidents = models.BooleanField(default=False)
     description_accidents = models.TextField(max_length=300)
     phone = PhoneNumberField()
+    created_at = models.DateTimeField(auto_now=True, blank=True)
+    updated_at = models.DateTimeField(auto_now_add=True, blank=True)
 
     body_type = models.ForeignKey(
         'BodyType',
@@ -82,6 +84,9 @@ class Mileage(models.Model):
     mileage_from = models.IntegerField()
     mileage_to = models.IntegerField()
 
+    def __str__(self):
+        return f'{self.mileage_from} - {self.mileage_to}'
+
     def count_this_mileage_car(self):
         count = self.objects.select_related('cars').get().cars.count()
         return count
@@ -97,6 +102,9 @@ class Transmission(models.Model):
 
 class Year(models.Model):
     year = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.year}'
 
     def count_this_year_car(self):
         count = self.objects.select_related('cars').get().cars.count()
@@ -117,3 +125,81 @@ class Color(models.Model):
     def count_this_color_car(self):
         count = self.objects.select_related('cars').get().cars.count()
         return count
+
+
+class Answer(models.Model):
+    created_at = models.DateTimeField(auto_now=True, blank=True)
+    updated_at = models.DateTimeField(auto_now_add=True, blank=True)
+    text_question = models.TextField(max_length=300)
+    question = models.ForeignKey(
+        'Question',
+        verbose_name='answers',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='answers',
+    )
+
+    car = models.ForeignKey(
+        Car,
+        on_delete=models.CASCADE,
+        related_name='answers'
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='answers'
+    )
+
+
+class Question(models.Model):
+    created_at = models.DateTimeField(auto_now=True, blank=True)
+    updated_at = models.DateTimeField(auto_now_add=True, blank=True)
+    text_question = models.TextField(max_length=300)
+
+    car = models.ForeignKey(
+        Car,
+        on_delete=models.CASCADE,
+        related_name='questions'
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='questions'
+    )
+
+
+class Message(models.Model):
+    text_message = models.TextField(max_length=200)
+
+    car = models.ForeignKey(
+        Car,
+        on_delete=models.CASCADE,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+
+    question = models.ForeignKey(
+        Question,
+        verbose_name='Question',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+
+class WishList(models.Model):
+    car_in_the_preferences = models.ManyToManyField(
+        Car,
+        blank=True,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
