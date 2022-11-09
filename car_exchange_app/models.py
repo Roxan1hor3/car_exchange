@@ -18,23 +18,7 @@ class Car(models.Model):
     created_at = models.DateTimeField(auto_now=True, blank=True)
     updated_at = models.DateTimeField(auto_now_add=True, blank=True)
 
-    body_type = models.ForeignKey(
-        'BodyType',
-        on_delete=models.CASCADE,
-        related_name='cars'
-    )
-    mark = models.ForeignKey(
-        'Mark',
-        on_delete=models.CASCADE,
-        related_name='cars',
 
-    )
-    renge_mileage = models.ForeignKey(
-        'Mileage',
-        on_delete=models.CASCADE,
-        related_name='cars',
-
-    )
     seller = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -42,90 +26,27 @@ class Car(models.Model):
         null=True,
         blank=True,
     )
-    transmission = models.ForeignKey(
-        'Transmission',
-        on_delete=models.CASCADE,
+    category = models.ManyToManyField(
+        'Category',
         related_name='cars',
-    )
-    year = models.ForeignKey(
-        'Year',
-        on_delete=models.CASCADE,
-        related_name='cars',
-    )
-    color = models.ForeignKey(
-        'Color',
-        on_delete=models.CASCADE,
-        related_name='cars',
-    )
-    drivetrain = models.ForeignKey(
-        'Drivetrain',
-        on_delete=models.CASCADE,
-        related_name='cars',
+        null=True,
+        blank=True,
     )
 
-
-class BodyType(models.Model):
-    title = models.CharField(max_length=30)
-
-    def count_this_body_type_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
+class Category(models.Model):
+    title = models.CharField(max_length=50)
 
 
-class Mark(models.Model):
-    title = models.CharField(max_length=30)
+class SubCategory(models.Model):
+    title = models.CharField(max_length=50)
 
-    def count_this_mark_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
-
-
-class Mileage(models.Model):
-    mileage_from = models.IntegerField()
-    mileage_to = models.IntegerField()
-
-    def __str__(self):
-        return f'{self.mileage_from} - {self.mileage_to}'
-
-    def count_this_mileage_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
-
-
-class Transmission(models.Model):
-    title = models.CharField(max_length=30)
-
-    def count_this_transmission_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
-
-
-class Year(models.Model):
-    year = models.IntegerField()
-
-    def __str__(self):
-        return f'{self.year}'
-
-    def count_this_year_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
-
-
-class Drivetrain(models.Model):
-    title = models.CharField(max_length=30)
-
-    def count_this_drivetrain_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
-
-
-class Color(models.Model):
-    title = models.CharField(max_length=30)
-
-    def count_this_color_car(self):
-        count = self.objects.select_related('cars').get().cars.count()
-        return count
-
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='sub_category',
+    )
 
 class Answer(models.Model):
     created_at = models.DateTimeField(auto_now=True, blank=True)

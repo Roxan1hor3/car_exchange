@@ -7,7 +7,7 @@ from . import views
 # router.register(r'car', views.CarViewSet)
 
 urlpatterns = [
-    path('cars/', views.CarListCreateView.as_view()),
+    path('cars/', views.CarListCreateView.as_view(), name='cars'),
     path('cars/<int:pk>/', views.CarUpdateDestroyView.as_view()),
     path('question/', views.QuestionCreateView.as_view()),
     path('answer/', views.AnswerCreateView.as_view()),

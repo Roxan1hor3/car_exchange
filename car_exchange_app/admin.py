@@ -4,13 +4,9 @@ from django.contrib import admin
 from .models import *
 
 admin.site.register(Car)
-admin.site.register(BodyType)
-admin.site.register(Mark)
-admin.site.register(Mileage)
-admin.site.register(Transmission)
-admin.site.register(Year)
-admin.site.register(Drivetrain)
-admin.site.register(Color)
+admin.site.register(Category)
+admin.site.register(SubCategory)
+
 admin.site.register(Question)
 admin.site.register(Message)
 admin.site.register(WishList)

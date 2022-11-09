@@ -3,6 +3,20 @@ from rest_framework import serializers
 from car_exchange_app.models import *
 
 
+class SubCategorySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = '__all__'
+
+
+class CategorySerializers(serializers.ModelSerializer):
+    sub_category = SubCategorySerializers(many=True)
+
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
 class AnswerSerializers(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -28,15 +42,8 @@ class QuestionCreateSerializers(serializers.ModelSerializer):
 
 
 class CarListSerializers(serializers.ModelSerializer):
-    body_type = serializers.SlugRelatedField(slug_field='title', queryset=BodyType.objects.all())
-    mark = serializers.SlugRelatedField(slug_field='title', queryset=Mark.objects.all())
-    renge_mileage = serializers.PrimaryKeyRelatedField(queryset=Mileage.objects.all())
-    seller = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    transmission = serializers.SlugRelatedField(slug_field='title', queryset=Transmission.objects.all())
-    year = serializers.PrimaryKeyRelatedField(queryset=Year.objects.all())
-    color = serializers.SlugRelatedField(slug_field='title', queryset=Color.objects.all())
-    drivetrain = serializers.SlugRelatedField(slug_field='title', queryset=Drivetrain.objects.all())
     questions = QuestionDetailSerializers(many=True, read_only=True)
+    category = CategorySerializers(many=True)
 
     class Meta:
         model = Car
@@ -45,15 +52,8 @@ class CarListSerializers(serializers.ModelSerializer):
 
 class CarDetailSerializers(serializers.ModelSerializer):
     """ Car detail """
-    body_type = serializers.SlugRelatedField(slug_field='title', queryset=BodyType.objects.all())
-    mark = serializers.SlugRelatedField(slug_field='title', queryset=Mark.objects.all())
-    renge_mileage = serializers.PrimaryKeyRelatedField(queryset=Mileage.objects.all())
-    seller = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    transmission = serializers.SlugRelatedField(slug_field='title', queryset=Transmission.objects.all())
-    year = serializers.PrimaryKeyRelatedField(queryset=Year.objects.all())
-    color = serializers.SlugRelatedField(slug_field='title', queryset=Color.objects.all())
-    drivetrain = serializers.SlugRelatedField(slug_field='title', queryset=Drivetrain.objects.all())
     questions = QuestionDetailSerializers(many=True, read_only=True)
+    category = CategorySerializers(many=True, read_only=True)
 
     class Meta:
         model = Car

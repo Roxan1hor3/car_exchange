@@ -9,8 +9,7 @@ class CarListCreateView(ListCreateAPIView):
     serializer_class = CarListSerializers
 
     def get_queryset(self):
-        return Car.objects.select_related('drivetrain', 'color', 'year', 'transmission', 'seller', 'renge_mileage',
-                                          'mark', 'body_type').prefetch_related('questions__answers')
+        return Car.objects.prefetch_related('questions__answers', 'category__sub_category')
 
 
 class CarUpdateDestroyView(RetrieveUpdateDestroyAPIView):
@@ -18,10 +17,7 @@ class CarUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):
-        return Car.objects.filter(pk=self.kwargs['pk']).select_related('drivetrain', 'color', 'year', 'transmission',
-                                                                       'seller', 'renge_mileage', 'mark',
-                                                                       'body_type').prefetch_related(
-            'questions__answers')
+        return Car.objects.filter(pk=self.kwargs['pk']).prefetch_related('questions__answers', 'category')
 
 
 class QuestionCreateView(CreateAPIView):
