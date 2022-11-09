@@ -21,7 +21,9 @@ from car_exchange import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth-api', include('rest_framework.urls'))
+    path('auth-api', include('rest_framework.urls')),
+    path('api/v1/', include('car_exchange_app.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 if settings.DEBUG:
