@@ -9,5 +9,6 @@ from . import views
 urlpatterns = [
     path('cars/', views.CarListCreateView.as_view()),
     path('cars/<int:pk>/', views.CarUpdateDestroyView.as_view()),
-    path('question/', views.QuestionListCreateView.as_view()),
+    path('question/', views.QuestionCreateView.as_view()),
+    path('answer/', views.AnswerCreateView.as_view()),
 ]

@@ -1,8 +1,8 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 
-from .models import Car, Question
+from .models import Car
 from .permissions import IsOwnerOrReadOnly
-from .serializers import QuestionListSerializers, CarDetailSerializers, CarListSerializers
+from .serializers import CarDetailSerializers, CarListSerializers, QuestionCreateSerializers, AnswerSerializers
 
 
 class CarListCreateView(ListCreateAPIView):
@@ -19,16 +19,18 @@ class CarUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Car.objects.filter(pk=self.kwargs['pk']).select_related('drivetrain', 'color', 'year', 'transmission',
-                                                                       'seller', 'renge_mileage',
-                                                                       'mark', 'body_type').prefetch_related(
-            'questions').prefetch_related('questions__answers')
+                                                                       'seller', 'renge_mileage', 'mark',
+                                                                       'body_type').prefetch_related(
+            'questions__answers')
 
 
-class QuestionListCreateView(ListCreateAPIView):
-    serializer_class = QuestionListSerializers
+class QuestionCreateView(CreateAPIView):
+    serializer_class = QuestionCreateSerializers
 
-    def get_queryset(self):
-        return Question.objects.filter(user=self.request.user).prefetch_related('answers')
+
+class AnswerCreateView(CreateAPIView):
+    serializer_class = AnswerSerializers
+
 # class CarListView(APIView):
 #     """ All cars """
 #

@@ -4,6 +4,8 @@ from car_exchange_app.models import *
 
 
 class AnswerSerializers(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Answer
         fields = '__all__'
@@ -17,7 +19,9 @@ class QuestionDetailSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class QuestionListSerializers(serializers.ModelSerializer):
+class QuestionCreateSerializers(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Question
         fields = '__all__'
@@ -37,6 +41,7 @@ class CarListSerializers(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = '__all__'
+
 
 class CarDetailSerializers(serializers.ModelSerializer):
     """ Car detail """
