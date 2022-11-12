@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
@@ -15,8 +17,8 @@ class Car(models.Model):
     accidents = models.BooleanField(default=False)
     description_accidents = models.TextField(max_length=300)
     phone = PhoneNumberField()
-    created_at = models.DateTimeField(auto_now=True, blank=True)
-    updated_at = models.DateTimeField(auto_now_add=True, blank=True)
+    created_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
+    updated_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
 
 
     seller = models.ForeignKey(
@@ -29,8 +31,7 @@ class Car(models.Model):
     category = models.ManyToManyField(
         'Category',
         related_name='cars',
-        null=True,
-        blank=True,
+
     )
 
 class Category(models.Model):
@@ -49,8 +50,8 @@ class SubCategory(models.Model):
     )
 
 class Answer(models.Model):
-    created_at = models.DateTimeField(auto_now=True, blank=True)
-    updated_at = models.DateTimeField(auto_now_add=True, blank=True)
+    created_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
+    updated_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
     text_question = models.TextField(max_length=300)
     question = models.ForeignKey(
         'Question',
@@ -75,8 +76,8 @@ class Answer(models.Model):
 
 
 class Question(models.Model):
-    created_at = models.DateTimeField(auto_now=True, blank=True)
-    updated_at = models.DateTimeField(auto_now_add=True, blank=True)
+    created_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
+    updated_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
     text_question = models.TextField(max_length=300)
 
     car = models.ForeignKey(

@@ -9,7 +9,7 @@ class CarListCreateView(ListCreateAPIView):
     serializer_class = CarListSerializers
 
     def get_queryset(self):
-        return Car.objects.prefetch_related('questions__answers', 'category__sub_category')
+        return Car.objects.select_related('seller').prefetch_related('questions__answers', 'category__sub_category')
 
 
 class CarUpdateDestroyView(RetrieveUpdateDestroyAPIView):
@@ -27,21 +27,3 @@ class QuestionCreateView(CreateAPIView):
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerSerializers
 
-# class CarListView(APIView):
-#     """ All cars """
-#
-#     @staticmethod
-#     def get(request):
-#         cars = Car.objects.all()
-#         serializers = CarListSerializers(cars, many=True)
-#         return Response(serializers.data)
-#
-#
-# class CarDetailView(APIView):
-#     """ All cars """
-#
-#     @staticmethod
-#     def get(request, pk):
-#         cars = get_object_or_404(Car, pk=pk)
-#         serializers = CarDetailSerializers(cars)
-#         return Response(serializers.data)

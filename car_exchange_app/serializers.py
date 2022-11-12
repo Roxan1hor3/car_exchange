@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 from car_exchange_app.models import *
 
@@ -26,7 +27,7 @@ class AnswerSerializers(serializers.ModelSerializer):
 
 
 class QuestionDetailSerializers(serializers.ModelSerializer):
-    answers = AnswerSerializers(many=True, read_only=True)
+    answers = AnswerSerializers(many=True)
 
     class Meta:
         model = Question
@@ -42,8 +43,8 @@ class QuestionCreateSerializers(serializers.ModelSerializer):
 
 
 class CarListSerializers(serializers.ModelSerializer):
-    questions = QuestionDetailSerializers(many=True, read_only=True)
     category = CategorySerializers(many=True)
+    seller = serializers.HiddenField(default=CurrentUserDefault())
 
     class Meta:
         model = Car
@@ -53,8 +54,8 @@ class CarListSerializers(serializers.ModelSerializer):
 class CarDetailSerializers(serializers.ModelSerializer):
     """ Car detail """
     questions = QuestionDetailSerializers(many=True, read_only=True)
-    category = CategorySerializers(many=True, read_only=True)
-
+    category = CategorySerializers(many=True)
+    seller = serializers.SlugRelatedField(slug_field='username', read_only=True)
     class Meta:
         model = Car
         fields = '__all__'
