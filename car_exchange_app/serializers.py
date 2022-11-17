@@ -1,7 +1,9 @@
+from django.shortcuts import get_list_or_404
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
 from car_exchange_app.models import *
+from car_exchange_app.services import add_tag_to_text_question, message_creata
 
 
 class SubCategorySerializers(serializers.ModelSerializer):
@@ -23,7 +25,13 @@ class AnswerSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = '__all__'
+        fields = ('id', 'updated_at', 'text_question', 'user', 'car', 'question', 'parent', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        print(validated_data)
+        answer = add_tag_to_text_question(validated_data)
+        message_creata(validated_data)
+        return answer
 
 
 class QuestionDetailSerializers(serializers.ModelSerializer):
@@ -56,6 +64,39 @@ class CarDetailSerializers(serializers.ModelSerializer):
     questions = QuestionDetailSerializers(many=True, read_only=True)
     category = CategorySerializers(many=True)
     seller = serializers.SlugRelatedField(slug_field='username', read_only=True)
+
     class Meta:
         model = Car
         fields = '__all__'
+
+
+class MessageListSerializers(serializers.ModelSerializer):
+    car = serializers.SlugRelatedField('name', read_only=True)
+
+    class Meta:
+        model = Message
+        fields = ('updated_at', 'text_message', 'car', 'question', 'answer')
+
+
+class MessageDetailSerializers(serializers.ModelSerializer):
+    car = CarDetailSerializers()
+    ping = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ('updated_at', 'text_message', 'car', 'question', 'answer', 'ping')
+
+    def get_ping(self, obj):
+        if obj.answer:
+            return AnswerSerializers(obj.answer).data
+        else:
+            return AnswerSerializers(obj.question).data
+
+
+class WishSerializers(serializers.ModelSerializer):
+    car = serializers.SlugRelatedField(slug_field='name' ,queryset=Car.objects.all())
+
+    class Meta:
+        model = Wish
+        fields = '__all__'
+

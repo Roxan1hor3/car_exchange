@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib.auth.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
@@ -17,9 +15,8 @@ class Car(models.Model):
     accidents = models.BooleanField(default=False)
     description_accidents = models.TextField(max_length=300)
     phone = PhoneNumberField()
-    created_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
-    updated_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
-
+    created_at = models.DateField(auto_now=True)
+    updated_at = models.DateField(auto_now_add=True)
 
     seller = models.ForeignKey(
         User,
@@ -31,8 +28,8 @@ class Car(models.Model):
     category = models.ManyToManyField(
         'Category',
         related_name='cars',
-
     )
+
 
 class Category(models.Model):
     title = models.CharField(max_length=50)
@@ -49,10 +46,20 @@ class SubCategory(models.Model):
         related_name='sub_category',
     )
 
+
 class Answer(models.Model):
-    created_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
-    updated_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
+    created_at = models.DateField(auto_now=True)
+    updated_at = models.DateField(auto_now_add=True)
     text_question = models.TextField(max_length=300)
+    parent = models.ForeignKey(
+        'self',
+        verbose_name='answers',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='children',
+    )
+
     question = models.ForeignKey(
         'Question',
         verbose_name='answers',
@@ -76,8 +83,8 @@ class Answer(models.Model):
 
 
 class Question(models.Model):
-    created_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
-    updated_at = models.DateField(blank=False, default=datetime.now().strftime("%Y-%m-%d"))
+    created_at = models.DateField(auto_now=True)
+    updated_at = models.DateField(auto_now_add=True)
     text_question = models.TextField(max_length=300)
 
     car = models.ForeignKey(
@@ -94,6 +101,8 @@ class Question(models.Model):
 
 
 class Message(models.Model):
+    created_at = models.DateField(auto_now=True)
+    updated_at = models.DateField(auto_now_add=True)
     text_message = models.TextField(max_length=200)
 
     car = models.ForeignKey(
@@ -101,25 +110,26 @@ class Message(models.Model):
         on_delete=models.CASCADE,
     )
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+    user = models.ManyToManyField(
+        User
     )
 
     question = models.ForeignKey(
         Question,
-        verbose_name='Question',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    answer = models.ForeignKey(
+        Answer,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
 
 
-class WishList(models.Model):
-    car_in_the_preferences = models.ManyToManyField(
-        Car,
-        blank=True,
-    )
+class Wish(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
     user = models.ForeignKey(
         User,

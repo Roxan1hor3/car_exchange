@@ -9,5 +9,5 @@ admin.site.register(SubCategory)
 
 admin.site.register(Question)
 admin.site.register(Message)
-admin.site.register(WishList)
+admin.site.register(Wish)
 admin.site.register(Answer)

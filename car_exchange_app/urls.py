@@ -11,4 +11,8 @@ urlpatterns = [
     path('cars/<int:pk>/', views.CarUpdateDestroyView.as_view()),
     path('question/', views.QuestionCreateView.as_view()),
     path('answer/', views.AnswerCreateView.as_view()),
+    path('message/', views.MessageListView.as_view()),
+    path('message/<int:pk>/', views.MessageDetailView.as_view()),
+    path('wishlist/', views.WishListUpdateDetailView.as_view()),
+    path('wish/<int:pk>/', views.WishCreateDelete.as_view()),
 ]
