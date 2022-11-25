@@ -1,9 +1,8 @@
-from django.shortcuts import get_list_or_404
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
 from car_exchange_app.models import *
-from car_exchange_app.services import add_tag_to_text_question, message_creata
+from car_exchange_app.services.services import add_tag_to_text_question, message_create
 
 
 class SubCategorySerializers(serializers.ModelSerializer):
@@ -28,9 +27,8 @@ class AnswerSerializers(serializers.ModelSerializer):
         fields = ('id', 'updated_at', 'text_question', 'user', 'car', 'question', 'parent', 'created_at', 'updated_at')
 
     def create(self, validated_data):
-        print(validated_data)
         answer = add_tag_to_text_question(validated_data)
-        message_creata(validated_data)
+        message_create(validated_data)
         return answer
 
 
@@ -56,7 +54,7 @@ class CarListSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = '__all__'
+        fields = '__all__'#['created_at', 'phone', 'other_photo', 'description_accidents']
 
 
 class CarDetailSerializers(serializers.ModelSerializer):
@@ -94,9 +92,8 @@ class MessageDetailSerializers(serializers.ModelSerializer):
 
 
 class WishSerializers(serializers.ModelSerializer):
-    car = serializers.SlugRelatedField(slug_field='name' ,queryset=Car.objects.all())
+    car = serializers.SlugRelatedField(slug_field='name', queryset=Car.objects.all())
 
     class Meta:
         model = Wish
         fields = '__all__'
-
