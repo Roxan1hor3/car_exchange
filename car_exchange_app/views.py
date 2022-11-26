@@ -8,7 +8,7 @@ from .models import Car, Message, Wish
 from .permissions import IsOwnerOrReadOnly
 from .serializers import CarDetailSerializers, CarListSerializers, QuestionCreateSerializers, \
     AnswerSerializers, MessageListSerializers, MessageDetailSerializers, WishSerializers
-from .services.castome_responce import CarRenderer
+from .services.castome_responce import CarRenderer, MessageRenderer
 from .services.objects_services import all_objects, filter_objects
 
 
@@ -47,10 +47,14 @@ class AnswerCreateView(CreateAPIView):
 class MessageListView(ListAPIView):
     serializer_class = MessageListSerializers
     permission_classes = [IsAuthenticated]
+    renderer_classes = [MessageRenderer, BrowsableAPIRenderer]
 
     def get_queryset(self):
-        user = self.request.user
-        return Message.objects.filter(user=user).select_related('car')
+        return filter_objects(
+            objects=Car.objects,
+            user=self.request.user,
+            select_related=('car',)
+        )
 
 
 class MessageDetailView(ListAPIView):

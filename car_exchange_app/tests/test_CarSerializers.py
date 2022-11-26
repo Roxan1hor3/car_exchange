@@ -1,6 +1,4 @@
-import glob
 import json
-import os
 
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
@@ -41,18 +39,17 @@ class CarListSerializersTestCase(APITestCase):
         self.answer1 = Answer.objects.create(text_question='qwerasff', car=self.car1, user=self.user1,
                                              question=self.question1)
         self.answer2 = Answer.objects.create(text_question='qwerasff', car=self.car2, user=self.user2,
-                                             question=self.question1)
+                                             question=self.question1, parent=self.answer1)
         self.answer3 = Answer.objects.create(text_question='qwerasff', car=self.car1, user=self.user1,
                                              question=self.question2)
         self.answer4 = Answer.objects.create(text_question='qwerasff', car=self.car2, user=self.user2,
-                                             question=self.question2)
+                                             question=self.question2, parent=self.answer3)
 
         self.car1.seller = self.user1
         self.car2.seller = self.user2
 
     def test_detail_cart(self):
         data = CarDetailSerializers([self.car1, self.car2], many=True).data
-        print(json.dumps(data, indent=4))
         expected_data = [
             {
                 "id": 1,
@@ -62,23 +59,25 @@ class CarListSerializersTestCase(APITestCase):
                         "answers": [
                             {
                                 "id": 1,
-                                "created_at": self.answer1.created_at,
-                                "updated_at": self.answer1.updated_at,
+                                "updated_at": self.answer1.updated_at.strftime("%Y-%m-%d"),
                                 "text_question": "qwerasff",
+                                "car": 1,
                                 "question": 1,
-                                "car": 1
+                                "parent": None,
+                                "created_at": self.answer1.created_at.strftime("%Y-%m-%d")
                             },
                             {
                                 "id": 2,
-                                "created_at": self.answer2.created_at,
-                                "updated_at": self.answer2.updated_at,
+                                "updated_at": self.answer2.updated_at.strftime("%Y-%m-%d"),
                                 "text_question": "qwerasff",
+                                "car": 2,
                                 "question": 1,
-                                "car": 2
+                                "parent": 1,
+                                "created_at": self.answer2.created_at.strftime("%Y-%m-%d")
                             }
                         ],
-                        "created_at": self.question1.created_at,
-                        "updated_at": self.question1.updated_at,
+                        "created_at": self.question1.created_at.strftime("%Y-%m-%d"),
+                        "updated_at": self.question1.updated_at.strftime("%Y-%m-%d"),
                         "text_question": "qwerasff",
                         "car": 1,
                         "user": 1
@@ -128,8 +127,8 @@ class CarListSerializersTestCase(APITestCase):
                 "accidents": True,
                 "description_accidents": "QEWRADSF",
                 "phone": "+380988181628",
-                "created_at": self.car1.created_at,
-                "updated_at": self.car1.updated_at
+                "created_at": self.car1.created_at.strftime("%Y-%m-%d"),
+                "updated_at": self.car1.updated_at.strftime("%Y-%m-%d")
             },
             {
                 "id": 2,
@@ -139,23 +138,25 @@ class CarListSerializersTestCase(APITestCase):
                         "answers": [
                             {
                                 "id": 3,
-                                "created_at": self.answer3.created_at,
-                                "updated_at": self.answer3.updated_at,
+                                "updated_at": self.answer3.updated_at.strftime("%Y-%m-%d"),
                                 "text_question": "qwerasff",
+                                "car": 1,
                                 "question": 2,
-                                "car": 1
+                                "parent": None,
+                                "created_at": self.answer3.created_at.strftime("%Y-%m-%d")
                             },
                             {
                                 "id": 4,
-                                "created_at": self.answer4.created_at,
-                                "updated_at": self.answer4.updated_at,
+                                "updated_at": self.answer4.updated_at.strftime("%Y-%m-%d"),
                                 "text_question": "qwerasff",
+                                "car": 2,
                                 "question": 2,
-                                "car": 2
+                                "parent": 3,
+                                "created_at": self.answer4.created_at.strftime("%Y-%m-%d")
                             }
                         ],
-                        "created_at": self.question2.created_at,
-                        "updated_at": self.question2.updated_at,
+                        "created_at": self.question2.created_at.strftime("%Y-%m-%d"),
+                        "updated_at": self.question2.updated_at.strftime("%Y-%m-%d"),
                         "text_question": "qwerasff",
                         "car": 2,
                         "user": 2
@@ -205,8 +206,8 @@ class CarListSerializersTestCase(APITestCase):
                 "accidents": True,
                 "description_accidents": "QEasdfWRADSF",
                 "phone": "+380988181628",
-                "created_at": self.car2.created_at,
-                "updated_at": self.car2.updated_at
+                "created_at": self.car2.created_at.strftime("%Y-%m-%d"),
+                "updated_at": self.car2.updated_at.strftime("%Y-%m-%d")
             }
         ]
         self.assertEqual(json.dumps(expected_data), json.dumps(data))
