@@ -1,9 +1,11 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView, \
     GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import BrowsableAPIRenderer
 
+from .filters import CarFilter
 from .models import Car, Message, Wish
 from .permissions import IsOwnerOrReadOnly
 from .serializers import CarDetailSerializers, CarListSerializers, QuestionCreateSerializers, \
@@ -15,6 +17,8 @@ from .services.objects_services import all_objects, filter_objects
 class CarListCreateView(ListCreateAPIView):
     serializer_class = CarListSerializers
     renderer_classes = [CarRenderer, BrowsableAPIRenderer]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CarFilter
 
     def get_queryset(self):
         return all_objects(

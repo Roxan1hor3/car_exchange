@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
+
     'drf_yasg',
     'phonenumber_field',
     'debug_toolbar',
@@ -155,4 +157,10 @@ SWAGGER_SETTINGS = {
             'in': 'header'
         }
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
